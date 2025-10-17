@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YallaCookies - Artisanal Cookies & Bakery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+       /* Cart Panel Styles */
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: #f8f4e9;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+            z-index: 10000;
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .cart-panel.active {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cart-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-header {
+            padding: 25px;
+            background: #8b7355;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-cart:hover {
+            transform: rotate(90deg);
+        }
+
+        .cart-items {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            animation: slideInItem 0.3s ease-out;
+        }
+
+        @keyframes slideInItem {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            background: #e8dfce;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #c19a6b;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #5a4c3a;
+        }
+
+        .cart-item-price {
+            color: #c19a6b;
+            font-weight: 600;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            background: #f0e9dd;
+            border-radius: 20px;
+            padding: 5px;
+        }
+
+        .quantity-btn {
+            background: none;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #8b7355;
+        }
+
+        .quantity-btn:hover {
+            background: #e0d5c0;
+        }
+
+        .quantity {
+            margin: 0 8px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .remove-item:hover {
+            transform: scale(1.2);
+        }
+
+        .cart-footer {
+            padding: 25px;
+            background: white;
+            border-top: 2px solid #e8dfce;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #5a4c3a;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: #c19a6b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .checkout-btn:hover {
+            background: #b08a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(193, 154, 107, 0.3);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8a7a65;
+        }
+
+        .empty-cart i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #d4c4ab;
+        }
+
+        .empty-cart p {
+            margin-bottom: 20px;
+        }
+
+        .continue-shopping {
+            background: #8b7355;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .continue-shopping:hover {
+            background: #7a6345;
+        }
+
+        /* Cart icon animation */
+        .cart-icon.pulse {
+            animation: cartPulse 0.5s ease;
+        }
+
+        @keyframes cartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Toast notification */
+        .cart-toast {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .cart-toast.active {
+            transform: translateX(0);
+        }
+
+        .cart-toast i {
+            font-size: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .cart-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .cart-toast {
+                right: 20px;
+                left: 20px;
+                transform: translateY(-150%);
+            }
+            
+            .cart-toast.active {
+                transform: translateY(0);
+            }
+        }
+        .contact-fullscreen {
+    min-height: 100vh;  /* Full screen height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: var(--beige); /* You can change the color */
+    text-align: center;
+}
+
+.contact-fullscreen h2 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--dark-brown);
+}
+
+.contact-fullscreen p {
+    font-size: 18px;
+    margin-bottom: 40px;
+    color: var(--text-light);
+}
+
+.contact-fullscreen form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.contact-fullscreen input,
+.contact-fullscreen textarea {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid var(--medium-brown);
+    font-size: 16px;
+    outline: none;
+}
+
+.contact-fullscreen textarea {
+    min-height: 150px;
+    resize: none;
+}
+
+        :root {
+            --cream: #f8f4e9;
+            --beige: #e8dfce;
+            --light-brown: #d4c4ab;
+            --medium-brown: #b8a58a;
+            --dark-brown: #8b7355;
+            --accent: #c19a6b;
+            --text: #5a4c3a;
+            --text-light: #8a7a65;
+            --shadow: 0 10px 30px rgba(92, 71, 46, 0.08);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            background-color: var(--cream);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: rgba(248, 244, 233, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(92, 71, 46, 0.05);
+            transition: var(--transition);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-brown);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .logo i {
+            margin-right: 12px;
+            font-size: 24px;
+            transition: transform 0.5s ease;
+        }
+        
+        .logo:hover i {
+            transform: rotate(15deg);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 16px;
+            transition: var(--transition);
+            padding: 8px 0;
+            position: relative;
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.4s ease;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-icon {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text);
+            transition: var(--transition);
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .cart-icon:hover {
+            background-color: var(--beige);
+            transform: translateY(-2px);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+        
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(193, 154, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.7s;
+        }
+        
+        .btn:hover {
+            background-color: var(--dark-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(193, 154, 107, 0.4);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--beige) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4c4ab' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 650px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-content h1 {
+            font-size: 64px;
+            margin-bottom: 25px;
+            color: var(--dark-brown);
+            line-height: 1.2;
+        }
+        
+        .hero-content p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        
+        .hero-btn {
+            background-color: var(--dark-brown);
+            font-size: 18px;
+            padding: 16px 40px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .hero-btn i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .hero-btn:hover i {
+            transform: translateX(5px);
+        }
+        
+        .hero-image {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50%;
+            height: 80%;
+            border-radius: 30px 0 0 30px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            animation: slideInRight 1.2s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px) translateY(-50%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) translateY(-50%);
+            }
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Products Section */
+        .products {
+            padding: 120px 0;
+            background-color: var(--cream);
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .section-title h2 {
+            font-size: 48px;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 30px auto 0;
+            font-size: 18px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+            position: relative;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.03));
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .product-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(92, 71, 46, 0.15);
+        }
+        
+        .product-image {
+            height: 240px;
+            background-color: var(--beige);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--accent);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
+        .product-info {
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .product-info h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: var(--dark-brown);
+        }
+        
+        .product-info p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .product-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .price {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 22px;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 120px 0;
+            background: linear-gradient(135deg, var(--beige) 0%, var(--light-brown) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            top: -100px;
+            right: -100px;
+        }
+        
+        .about::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            bottom: -80px;
+            left: -80px;
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .about-text h2 {
+            font-size: 48px;
+            color: var(--dark-brown);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .about-text h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -15px;
+            left: 0;
+        }
+        
+        .about-text p {
+            margin-bottom: 25px;
+            color: var(--text);
+            font-size: 17px;
+            line-height: 1.8;
+        }
+        
+        .about-stats {
+            display: flex;
+            margin-top: 40px;
+            gap: 40px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+        
+        .about-image {
+            flex: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transform: rotate(-2deg);
+            transition: var(--transition);
+        }
+        
+        .about-image:hover {
+            transform: rotate(0deg);
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Locations Section */
+        .locations {
+            padding: 120px 0;
+            background-color: var(--cream);
+        }
+        
+        .location-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .location-card {
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .location-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(92, 71, 46, 0.12);
+        }
+        
+        .location-image {
+            height: 220px;
+            background-color: var(--beige);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.05));
+            z-index: 1;
+        }
+        
+        .location-info {
+            padding: 30px;
+        }
+        
+        .location-info h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--dark-brown);
+        }
+        
+        .location-info p {
+            margin-bottom: 15px;
+            color: var(--text);
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .location-info i {
+            margin-right: 12px;
+            color: var(--accent);
+            width: 20px;
+            margin-top: 3px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-brown);
+            color: var(--beige);
+            padding: 80px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
+        }
+        
+        .footer-column h3 {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: var(--cream);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-column p {
+            color: var(--light-brown);
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 15px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--light-brown);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-column ul li a i {
+            margin-right: 10px;
+            width: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--cream);
+            padding-left: 5px;
+        }
+        
+        .footer-column ul li a:hover i {
+            transform: translateX(3px);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: rgba(255,255,255,0.1);
+            color: var(--cream);
+            border-radius: 50%;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .newsletter-form {
+            display: flex;
+            margin-top: 20px;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            outline: none;
+            background: rgba(255,255,255,0.9);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .newsletter-form button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .newsletter-form button:hover {
+            background-color: var(--cream);
+            color: var(--dark-brown);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--light-brown);
+            font-size: 14px;
+        }
+        
+        /* Page Transition */
+        .page {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--cream);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s, visibility 0.8s;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .cookie-loader {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            position: relative;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 20px rgba(193, 154, 107, 0.4);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1); opacity: 1; box-shadow: 0 0 30px rgba(193, 154, 107, 0.6); }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+        
+        .cookie-loader::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--dark-brown);
+            border-radius: 50%;
+            top: 15px;
+            left: 15px;
+        }
+        
+        .cookie-loader::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: var(--dark-brown);
+            border-radius: 50%;
+            bottom: 20px;
+            right: 20px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .hero-content h1 {
+                font-size: 52px;
+            }
+            
+            .hero-image {
+                width: 45%;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .hero-image {
+                position: relative;
+                width: 100%;
+                height: 400px;
+                transform: none;
+                border-radius: 20px;
+                margin-top: 40px;
+            }
+            
+            .hero {
+                padding: 120px 0 80px;
+                min-height: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+            
+            nav ul {
+                margin: 20px 0;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 8px 15px;
+            }
+            
+            .hero-content h1 {
+                font-size: 42px;
+            }
+            
+            .hero-content p {
+                font-size: 18px;
+            }
+            
+            .section-title h2 {
+                font-size: 36px;
+            }
+            
+            .about-stats {
+                flex-direction: column;
+                gap: 25px;
+            }
+        }
+        
+        /* Floating Elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-element {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c19a6b'%3E%3Cpath d='M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm-1 15.5v-7l6 3.5-6 3.5z'/%3E%3C/svg%3E") no-repeat center;
+            opacity: 0.1;
+            animation: floatElement 15s infinite linear;
+        }
+        
+        .floating-element:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        
+        .floating-element:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .floating-element:nth-child(3) {
+            bottom: 30%;
+            left: 8%;
+            animation-delay: 4s;
+        }
+        
+        .floating-element:nth-child(4) {
+            bottom: 15%;
+            right: 5%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes floatElement {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Elements -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loader" id="loader">
+        <div class="cookie-loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo" onclick="showPage('home')">
+    <img src="logo.png" alt="Your Brand" class="logo-img">
+</a>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="showPage('home')">Home</a></li>
+                    <li><a href="#" onclick="showPage('products')">Our Flavours</a></li>
+                    <li><a href="#" onclick="showPage('about')">About Us</a></li>
+                    <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+                <button class="btn" onclick="showPage('products')">Order Now</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <section id="home" class="page active">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Artisanal Cookies Crafted with Passion</h1>
+                    <p>Indulge in our exquisite, handcrafted cookies made with the finest ingredients, baked fresh daily with love and attention to detail.</p>
+                    <button class="btn hero-btn" onclick="showPage('products')">Discover Our Collection <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Delicious Cookies">
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Products -->
+        <div class="products">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Signature Collection</h2>
+                    <p>Handcrafted perfection in every bite - discover our most beloved Flavour</p>
+                </div>
+                <div class="product-grid">
+                    <!-- Product 1 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Chocolate Chip Cookie">
+                            <div class="product-badge">Bestseller</div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Classic Chocolate Chip</h3>
+                            <p>Our signature cookie loaded with premium Belgian chocolate chips and a hint of vanilla.</p>
+                            <div class="product-price">
+                                <span class="price">AED 22</span>
+                                <button class="btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1586987177716-902361c3d79c?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="White Chocolate Macadamia">
+                            <div class="product-badge">New</div>
+                        </div>
+                        <div class="product-info">
+                            <h3>White Chocolate Macadamia</h3>
+                            <p>Buttery cookie with creamy white chocolate and crunchy macadamia nuts.</p>
+                            <div class="product-price">
+                                <span class="price">AED 25</span>
+                                <button class="btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 3 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Oatmeal Raisin Cookie">
+                        </div>
+                        <div class="product-info">
+                            <h3>Artisanal Oatmeal Raisin</h3>
+                            <p>Hearty oatmeal cookie with plump raisins, cinnamon, and a touch of nutmeg.</p>
+                            <div class="product-price">
+                                <span class="price">AED 20</span>
+                                <button class="btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 4 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1623334044303-241021148842?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Peanut Butter Cookie">
+                        </div>
+                        <div class="product-info">
+                            <h3>Peanut Butter Delight</h3>
+                            <p>Creamy peanut butter cookie with chocolate chunks and a sprinkle of sea salt.</p>
+                            <div class="product-price">
+                                <span class="price">AED 23</span>
+                                <button class="btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Products Page -->
+    <section id="products" class="page">
+        <div class="products" style="padding-top: 100px;">
+            <div class="container">
+                <div class="section-title">
+                    <h2>COOKIES FLAVOURS</h2>       
+                    <p>What's your flavour?</p>
+                </div>
+                
+                <!-- Category Filter -->
+                <div class="category-filter">
+                    <div class="filter-nav">
+                        <button class="nav-arrow left-arrow" id="prevCategory">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-category="all">All Cookies</button>
+                            <button class="filter-btn" data-category="chocolate">Chocolate Flavours</button>
+                            <button class="filter-btn" data-category="premium">Premium Flavours</button>
+                            <button class="filter-btn" data-category="non-chocolate">Non-Chocolate</button>
+                        </div>
+                        
+                        <button class="nav-arrow right-arrow" id="nextCategory">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- New Gallery Layout -->
+                <div class="flavor-gallery">
+                    <!-- Chocolate Flavors -->
+                    <div class="flavor-item" data-category="chocolate">
+                        <div class="flavor-image">
+                            <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Double Chocolate Cookie">
+                            <div class="flavor-overlay">
+                                <div class="flavor-content">
+                                    <h3>Double Chocolate Indulgence</h3>
+                                    <p>Rich chocolate cookie with white and dark chocolate chunks for the ultimate experience.</p>
+                                    <div class="flavor-price">AED 24</div>
+                                    <button class="btn flavor-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-item" data-category="chocolate">
+                        <div class="flavor-image">
+                            <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Chocolate Chip Cookie">
+                            <div class="flavor-overlay">
+                                <div class="flavor-content">
+                                    <h3>Classic Chocolate Chip</h3>
+                                    <p>Our signature cookie loaded with premium Belgian chocolate chips.</p>
+                                    <div class="flavor-price">AED 22</div>
+                                    <button class="btn flavor-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Premium Flavors -->
+                    <div class="flavor-item" data-category="premium">
+                        <div class="flavor-image">
+                            <img src="https://images.unsplash.com/photo-1590080875485-7d6f6db2d2cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Red Velvet Cookie">
+                            <div class="flavor-overlay">
+                                <div class="flavor-content">
+                                    <h3>Red Velvet Dream</h3>
+                                    <p>Decadent red velvet cookie with cream cheese frosting chunks.</p>
+                                    <div class="flavor-price">AED 26</div>
+                                    <button class="btn flavor-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-item" data-category="premium">
+                        <div class="flavor-image">
+                            <img src="https://images.unsplash.com/photo-1607919888516-8a2b7a5787c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Salted Caramel Cookie">
+                            <div class="flavor-overlay">
+                                <div class="flavor-content">
+                                    <h3>Salted Caramel Bliss</h3>
+                                    <p>Buttery cookie with gooey caramel center and a sprinkle of sea salt.</p>
+                                    <div class="flavor-price">AED 27</div>
+                                    <button class="btn flavor-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Non-Chocolate Flavors -->
+                    <div class="flavor-item" data-category="non-chocolate">
+                        <div class="flavor-image">
+                            <img src="https://images.unsplash.com/photo-1559620192-032c4bc4674e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Snickerdoodle Cookie">
+                            <div class="flavor-overlay">
+                                <div class="flavor-content">
+                                    <h3>Cinnamon Snickerdoodle</h3>
+                                    <p>Soft cinnamon sugar cookie with a delightful crinkle texture.</p>
+                                    <div class="flavor-price">AED 19</div>
+                                    <button class="btn flavor-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-item" data-category="non-chocolate">
+                        <div class="flavor-image">
+                            <img src="https://images.unsplash.com/photo-1586987177716-902361c3d79c?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="White Chocolate Macadamia">
+                            <div class="flavor-overlay">
+                                <div class="flavor-content">
+                                    <h3>White Chocolate Macadamia</h3>
+                                    <p>Buttery cookie with creamy white chocolate and crunchy macadamia nuts.</p>
+                                    <div class="flavor-price">AED 25</div>
+                                    <button class="btn flavor-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            /* Category Filter Styles */
+            .category-filter {
+                margin: 50px 0 30px 0;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .filter-nav {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                background: linear-gradient(145deg, #ffffff 0%, #f8f6f2 100%);
+                padding: 20px 30px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(139, 115, 85, 0.1);
+                border: 1px solid rgba(139, 115, 85, 0.1);
+            }
+            
+            .filter-buttons {
+                display: flex;
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .filter-btn {
+                padding: 12px 24px;
+                border: 2px solid #e8dfce;
+                background: white;
+                color: var(--text);
+                border-radius: 50px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-size: 14px;
+                white-space: nowrap;
+            }
+            
+            .filter-btn:hover {
+                border-color: var(--accent);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(193, 154, 107, 0.2);
+            }
+            
+            .filter-btn.active {
+                background: var(--accent);
+                color: white;
+                border-color: var(--accent);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(193, 154, 107, 0.3);
+            }
+            
+            .nav-arrow {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                border: 2px solid var(--accent);
+                background: white;
+                color: var(--accent);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                font-size: 16px;
+            }
+            
+            .nav-arrow:hover {
+                background: var(--accent);
+                color: white;
+                transform: scale(1.1);
+                box-shadow: 0 5px 15px rgba(193, 154, 107, 0.3);
+            }
+            
+            .nav-arrow:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+                transform: none;
+            }
+            
+            .nav-arrow:disabled:hover {
+                background: white;
+                color: var(--accent);
+            }
+            
+            /* Flavor Gallery Styles */
+            .flavor-gallery {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 30px;
+                margin-top: 30px;
+            }
+            
+           .flavor-item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(139, 115, 85, 0.1);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 270px; /* Fixed width */
+    height: 325px; /* Fixed height */
+    cursor: pointer;
+    opacity: 1;
+    transform: scale(1);
+    animation: slideInUp 0.6s ease-out;
+    margin: 0 auto; /* Center the items */
+}
+            
+            .flavor-item.hidden {
+                display: none;
+            }
+            
+            .flavor-item:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 25px 50px rgba(139, 115, 85, 0.2);
+            }
+            
+            .flavor-image {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            
+            .flavor-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: all 0.5s ease;
+            }
+            
+            .flavor-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, rgba(193, 154, 107, 0.9) 0%, rgba(139, 115, 85, 0.95) 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: all 0.4s ease;
+                padding: 30px;
+                text-align: center;
+            }
+            
+            .flavor-item:hover .flavor-overlay {
+                opacity: 1;
+            }
+            
+            .flavor-item:hover .flavor-image img {
+                transform: scale(1.1);
+                filter: brightness(0.7);
+            }
+            
+            .flavor-content {
+                color: white;
+                transform: translateY(20px);
+                transition: transform 0.4s ease;
+            }
+            
+            .flavor-item:hover .flavor-content {
+                transform: translateY(0);
+            }
+            
+            .flavor-content h3 {
+                font-size: 24px;
+                margin-bottom: 15px;
+                font-weight: 600;
+                color: white;
+            }
+            
+            .flavor-content p {
+                font-size: 16px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+                opacity: 0.9;
+            }
+            
+            .flavor-price {
+                font-size: 22px;
+                font-weight: 700;
+                margin-bottom: 20px;
+                color: #f8f4e9;
+            }
+            
+            .flavor-btn {
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                transition: all 0.3s ease;
+            }
+            
+            .flavor-btn:hover {
+                background: white;
+                color: var(--dark-brown);
+                transform: translateY(-2px);
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .filter-nav {
+                    flex-direction: column;
+                    gap: 15px;
+                    padding: 15px 20px;
+                }
+                
+                .filter-buttons {
+                    gap: 10px;
+                }
+                
+                .filter-btn {
+                    padding: 10px 16px;
+                    font-size: 12px;
+                }
+                
+                .nav-arrow {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 14px;
+                }
+                
+                .flavor-gallery {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
+                .flavor-item {
+                    height: 300px;
+                }
+                
+                .flavor-content h3 {
+                    font-size: 20px;
+                }
+                
+                .flavor-content p {
+                    font-size: 14px;
+                }
+            }
+        </style>
+        
+        <script>
+            // Category Filter Functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterButtons = document.querySelectorAll('.filter-btn');
+                const flavorItems = document.querySelectorAll('.flavor-item');
+                const prevButton = document.getElementById('prevCategory');
+                const nextButton = document.getElementById('nextCategory');
+                
+                let currentCategoryIndex = 0;
+                const categories = ['all', 'chocolate', 'premium', 'non-chocolate'];
+                
+                // Filter items by category
+                function filterItems(category) {
+                    flavorItems.forEach(item => {
+                        if (category === 'all' || item.getAttribute('data-category') === category) {
+                            item.classList.remove('hidden');
+                            // Add animation for appearing items
+                            item.style.opacity = '0';
+                            item.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0)';
+                            }, 50);
+                        } else {
+                            item.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Update active button
+                    filterButtons.forEach(btn => {
+                        if (btn.getAttribute('data-category') === category) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    
+                    // Update current category index
+                    currentCategoryIndex = categories.indexOf(category);
+                    updateArrowButtons();
+                }
+                
+                // Update arrow button states
+                function updateArrowButtons() {
+                    prevButton.disabled = currentCategoryIndex === 0;
+                    nextButton.disabled = currentCategoryIndex === categories.length - 1;
+                }
+                
+                // Navigate to next category
+                function nextCategory() {
+                    if (currentCategoryIndex < categories.length - 1) {
+                        currentCategoryIndex++;
+                        filterItems(categories[currentCategoryIndex]);
+                    }
+                }
+                
+                // Navigate to previous category
+                function prevCategory() {
+                    if (currentCategoryIndex > 0) {
+                        currentCategoryIndex--;
+                        filterItems(categories[currentCategoryIndex]);
+                    }
+                }
+                
+                // Event listeners for filter buttons
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const category = this.getAttribute('data-category');
+                        filterItems(category);
+                    });
+                });
+                
+                // Event listeners for navigation arrows
+                prevButton.addEventListener('click', prevCategory);
+                nextButton.addEventListener('click', nextCategory);
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowLeft') {
+                        prevCategory();
+                    } else if (e.key === 'ArrowRight') {
+                        nextCategory();
+                    }
+                });
+                
+                // Initialize
+                updateArrowButtons();
+                
+                // Add to cart functionality for flavor items
+                const flavorButtons = document.querySelectorAll('.flavor-btn');
+                
+                flavorButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent triggering the hover effect
+                        
+                        const flavorItem = this.closest('.flavor-item');
+                        const name = flavorItem.querySelector('h3').textContent;
+                        const priceText = flavorItem.querySelector('.flavor-price').textContent;
+                        const price = parseFloat(priceText.replace('AED ', ''));
+                        const image = flavorItem.querySelector('img').src;
+                        
+                        // Get the cart from localStorage or initialize empty array
+                        let cart = JSON.parse(localStorage.getItem('yallaCookiesCart')) || [];
+                        
+                        // Check if item already exists in cart
+                        const existingItem = cart.find(item => item.name === name);
+                        
+                        if (existingItem) {
+                            existingItem.quantity += 1;
+                        } else {
+                            cart.push({
+                                name,
+                                price,
+                                image,
+                                quantity: 1
+                            });
+                        }
+                        
+                        // Save to localStorage
+                        localStorage.setItem('yallaCookiesCart', JSON.stringify(cart));
+                        
+                        // Update cart count display
+                        updateCartCount();
+                        
+                        // Update cart panel if it's open
+                        if (window.renderCartItems) {
+                            window.renderCartItems();
+                        }
+                        
+                        // Show feedback
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-check"></i> Added!';
+                        this.disabled = true;
+                        
+                        // Cart icon animation
+                        document.querySelector('.cart-icon').classList.add('pulse');
+                        setTimeout(() => {
+                            document.querySelector('.cart-icon').classList.remove('pulse');
+                        }, 500);
+                        
+                        // Show toast
+                        showToast('Cookie added to cart!');
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        }, 1500);
+                    });
+                });
+                
+                // Update cart count function
+                function updateCartCount() {
+                    const cart = JSON.parse(localStorage.getItem('yallaCookiesCart')) || [];
+                    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount) {
+                        cartCount.textContent = totalItems;
+                    }
+                }
+                
+                // Show toast function
+                function showToast(message) {
+                    const cartToast = document.getElementById('cartToast');
+                    if (cartToast) {
+                        cartToast.querySelector('span').textContent = message;
+                        cartToast.classList.add('active');
+                        
+                        setTimeout(() => {
+                            cartToast.classList.remove('active');
+                        }, 3000);
+                    }
+                }
+                
+                // Initialize cart count on page load
+                updateCartCount();
+            });
+        </script>
+    </section>
+
+    </section>
+    <!-- About Page -->
+    <section id="about" class="page">
+        <div class="about">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2>Our Artisanal Journey</h2>
+                        <p>YallaCookies began as a simple passion project in a home kitchen, inspired by childhood memories of baking with family. What started as sharing cookies with friends soon grew into a beloved local bakery.</p>
+                        <p>We're committed to using only the finest ingredients—premium Belgian chocolate, organic flour, farm-fresh eggs, and real butter. Each cookie is carefully handcrafted and baked to perfection throughout the day.</p>
+                        <p>At YallaCookies, we believe that exceptional ingredients and traditional techniques create moments of pure joy. Every cookie tells a story of craftsmanship, quality, and the simple pleasure of sharing something made with love.</p>
+                        
+                        <div class="about-stats">
+                            <div class="stat">
+                                <span class="stat-number">15+</span>
+                                <span class="stat-label">Cookie Varieties</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">15+</span>
+                                <span class="stat-label">Orders Served</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">50+</span>
+                                <span class="stat-label">Happy Customers</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-image">
+                        <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="Cookie Baking Process">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  
+
+    <!-- Contact Page -->
+<section id="contact" class="page">
+  <div class="contact-fullscreen">
+    <h2>Contact Us</h2>
+    <p>Reach out to us for orders, inquiries, or just to say hi!</p>
+    <form action="https://formspree.io/f/xovkyrwz" method="POST" class="premium-contact-form">
+      
+      <div class="form-group">
+        <div class="input-wrapper">
+          <i class="fas fa-user form-icon"></i>
+          <input type="text" name="name" placeholder="Your Name" required class="form-input" style="padding-left: 100px;">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="input-wrapper">
+          <i class="fas fa-envelope form-icon"></i>
+          <input type="email" name="email" placeholder="Your Email" required class="form-input" style="padding-left: 100px;">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="input-wrapper">
+          <i class="fas fa-comment form-icon textarea-icon"></i>
+          <textarea name="message" placeholder="Your Message" required class="form-textarea" style="padding-left: 100px;"></textarea>
+        </div>
+      </div>
+      
+      <button type="submit" class="premium-submit-btn">
+        <span class="btn-content">
+          <i class="fas fa-paper-plane btn-icon"></i>
+          Send Message
+        </span>
+        <div class="btn-overlay"></div>
+      </button>
+    </form>
+  </div>
+</section>
+
+
+<style>
+.premium-contact-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f6f2 100%);
+    border-radius: 24px;
+    box-shadow: 
+        0 20px 40px rgba(139, 115, 85, 0.08),
+        0 8px 16px rgba(139, 115, 85, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(139, 115, 85, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-contact-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c19a6b, #e8dfce, #c19a6b);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: -200% 0; }
+    50% { background-position: 200% 0; }
+}
+
+.form-group {
+    margin-bottom: 28px;
+    position: relative;
+}
+
+.input-wrapper {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-wrapper:focus-within {
+    transform: translateY(-2px);
+}
+
+.form-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #c19a6b;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.textarea-icon {
+    top: 24px;
+    transform: none;
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: 18px 20px 18px 52px;
+    border: 2px solid #f0e9dd;
+    border-radius: 16px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+}
+
+.form-textarea {
+    height: 140px;
+    resize: none;
+    padding-top: 18px;
+    line-height: 1.5;
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+    color: #a8a196;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #c19a6b;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+        0 8px 24px rgba(193, 154, 107, 0.15),
+        0 4px 12px rgba(193, 154, 107, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.form-input:focus::placeholder, .form-textarea:focus::placeholder {
+    transform: translateX(4px);
+    opacity: 0.7;
+}
+
+.form-input:focus + .form-icon, .form-textarea:focus + .form-icon {
+    color: #8b7355;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.form-textarea:focus + .form-icon {
+    transform: scale(1.1);
+}
+
+/* Premium Submit Button */
+.premium-submit-btn {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #c19a6b 0%, #b08a5a 100%);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 8px 24px rgba(193, 154, 107, 0.3),
+        0 4px 12px rgba(193, 154, 107, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.premium-submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.premium-submit-btn:hover::before {
+    left: 100%;
+}
+
+.premium-submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 16px 32px rgba(193, 154, 107, 0.4),
+        0 8px 16px rgba(193, 154, 107, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #b08a5a 0%, #a07a4a 100%);
+}
+
+.premium-submit-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 12px rgba(193, 154, 107, 0.3),
+        0 2px 6px rgba(193, 154, 107, 0.2);
+}
+
+.btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 30px;
+    transition: all 0.3s ease;
+}
+
+.btn-icon {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.premium-submit-btn:hover .btn-icon {
+    transform: translateX(3px) translateY(-2px);
+}
+
+.btn-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.premium-submit-btn:hover .btn-overlay {
+    opacity: 1;
+}
+
+/* Floating animation for form */
+.premium-contact-form {
+    animation: floatForm 6s ease-in-out infinite;
+}
+
+@keyframes floatForm {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .premium-contact-form {
+        padding: 30px 25px;
+        margin: 0 20px;
+        border-radius: 20px;
+    }
+    
+    .form-input, .form-textarea {
+        padding: 16px 20px 16px 48px;
+        font-size: 15px;
+    }
+    
+    .btn-content {
+        padding: 18px 25px;
+    }
+}
+</style>
+
+    </div>
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h3>YallaCookies</h3>
+                        <p>Artisanal cookies crafted with passion and the finest ingredients. Experience the taste of homemade perfection in every bite.</p>
+                        <div class="social-icons">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-tiktok"></i></a>
+                            <a href="#"><i class="fab fa-pinterest"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Explore</h3>
+                        <ul>
+                            <li><a href="#" onclick="showPage('home')"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="#" onclick="showPage('products')"><i class="fas fa-chevron-right"></i> Our Flavours</a></li>
+                            <li><a href="#" onclick="showPage('about')"><i class="fas fa-chevron-right"></i> Our Story</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Contact Us</h3>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-map-marker-alt"></i> Online Bussiness</a></li>
+                            <li><a href="tel:+97141234567"><i class="fas fa-phone"></i> +971 50 390 9766</a></li>
+                            <li><a href="mailto:order.yallacookies@gmail.com"><i class="fas fa-envelope"></i> order.yallacookies@gmail.com</a></li>
+                            <li><a href="#"><i class="fas fa-clock"></i> Daily: 4PM - 11AM</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+    <h3>Newsletter</h3>
+    <p>Subscribe to receive updates on new flavors, seasonal specials, and exclusive offers.</p>
+    
+    <form action="https://formspree.io/f/xovkyrwz" method="POST" class="footer-newsletter-form">
+        <div class="input-wrapper">
+            <i class="fas fa-envelope form-icon"></i>
+            <input type="email" name="email" placeholder="Your Email" required class="form-input" style="padding-left: 40px;">
+        </div>
+        <button type="submit" class="premium-submit-btn" style="margin-top: 10px;">
+            <span class="btn-content">
+                <i class="fas fa-paper-plane btn-icon"></i>
+                Subscribe
+            </span>
+            <div class="btn-overlay"></div>
+        </button>
+    </form>
+</div>
+
+                <div class="copyright">
+                    <p>&copy; 2025 YallaCookies. All rights reserved. | Crafted with <i class="fas fa-heart" style="color: var(--accent);"></i> in Dubai</p>
+                </div>
+            </div>
+        </footer>
+    </section>
+    <style>
+  /* Hide footer by default */
+  .site-footer {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const footer = document.querySelector(".site-footer");
+    
+    // Hide footer by default
+    footer.style.display = "none";
+
+    function updateFooter() {
+      const contactSection = document.getElementById("contact");
+      // Show footer only if contact section exists AND is visible
+      if (contactSection && contactSection.offsetParent !== null) {
+        footer.style.display = "block";
+      } else {
+        footer.style.display = "none";
+      }
+    }
+
+    // Run initially
+    updateFooter();
+
+    // If you use dynamic page navigation, call updateFooter whenever page changes
+    window.showPage = function(pageId) {
+      document.querySelectorAll(".page").forEach(sec => sec.style.display = "none");
+      const page = document.getElementById(pageId);
+      if (page) page.style.display = "block";
+
+      // Update footer visibility
+      updateFooter();
+    };
+  });
+</script>
+
+
+<!-- Cart Panel -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h3>Your Cookie Cart</h3>
+            <button class="close-cart" id="closeCart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        
+        <div class="cart-footer" id="cartFooter">
+            <!-- Cart total and checkout button -->
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="cart-toast" id="cartToast">
+        <i class="fas fa-check-circle"></i>
+        <span>Item added to cart!</span>
+    </div>
+
+    <script>
+        // Page navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show the selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            return false;
+        }
+        
+        // Cart functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const addToCartButtons = document.querySelectorAll('.product-card .btn');
+            const cartCount = document.querySelector('.cart-count');
+            let count = 0;
+            
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    count++;
+                    cartCount.textContent = count;
+                    
+                    // Animation for feedback
+                    this.innerHTML = '<i class="fas fa-check"></i> Added!';
+                    this.style.backgroundColor = '#2ecc71';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = 'Add to Cart';
+                        this.style.backgroundColor = '';
+                    }, 1500);
+                    
+                    // Create floating cookie animation
+                    const cookie = document.createElement('div');
+                    cookie.innerHTML = '<i class="fas fa-cookie-bite"></i>';
+                    cookie.style.position = 'fixed';
+                    cookie.style.fontSize = '20px';
+                    cookie.style.color = 'var(--accent)';
+                    cookie.style.zIndex = '1000';
+                    cookie.style.pointerEvents = 'none';
+                    
+                    const rect = this.getBoundingClientRect();
+                    cookie.style.left = rect.left + 'px';
+                    cookie.style.top = rect.top + 'px';
+                    
+                    document.body.appendChild(cookie);
+                    
+                    // Animate to cart
+                    const cartRect = document.querySelector('.cart-icon').getBoundingClientRect();
+                    const animation = cookie.animate([
+                        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                        { transform: `translate(${cartRect.left - rect.left}px, ${cartRect.top - rect.top}px) scale(0.5)`, opacity: 0 }
+                    ], {
+                        duration: 800,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    });
+                    
+                    animation.onfinish = () => {
+                        document.body.removeChild(cookie);
+                    };
+                });
+            });
+            
+            // Hide loader after page load
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 1500);
+            });
+            
+            // Scroll animations
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => observer.observe(el));
+            
+        });
+    </script>
+      
+      <script>
+      let cart = JSON.parse(localStorage.getItem('yallaCookiesCart')) || [];
+        document.addEventListener('DOMContentLoaded', function() {
+            const addToCartButtons = document.querySelectorAll('.product-card .btn');
+            const cartIcon = document.querySelector('.cart-icon');
+            const cartCount = document.querySelector('.cart-count');
+            const cartPanel = document.getElementById('cartPanel');
+            const cartOverlay = document.getElementById('cartOverlay');
+            const closeCart = document.getElementById('closeCart');
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartToast = document.getElementById('cartToast');
+            
+           
+
+            // Update cart count display
+            function updateCartCount() {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCount.textContent = totalItems;
+                
+                // Save to localStorage
+                localStorage.setItem('yallaCookiesCart', JSON.stringify(cart));
+            }
+
+            // Show toast notification
+            function showToast(message) {
+                cartToast.querySelector('span').textContent = message;
+                cartToast.classList.add('active');
+                
+                setTimeout(() => {
+                    cartToast.classList.remove('active');
+                }, 3000);
+            }
+
+            // Add products to cart
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productCard = this.closest('.product-card');
+                    const name = productCard.querySelector('h3').textContent;
+                    const priceText = productCard.querySelector('.price').textContent;
+                    const price = parseFloat(priceText.replace('AED ', ''));
+                    const image = productCard.querySelector('img').src;
+                    
+                    // Check if item already exists in cart
+                    const existingItem = cart.find(item => item.name === name);
+                    
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                    } else {
+                        cart.push({
+                            name,
+                            price,
+                            image,
+                            quantity: 1
+                        });
+                    }
+                    
+                    // Update UI
+                    updateCartCount();
+                    renderCartItems();  
+                    
+                    // Show feedback
+                    this.innerHTML = '<i class="fas fa-check"></i> Added!';
+                    this.disabled = true;
+                    
+                    // Cart icon animation
+                    cartIcon.classList.add('pulse');
+                    setTimeout(() => {
+                        cartIcon.classList.remove('pulse');
+                    }, 500);
+                
+                    // Show toast
+                    showToast('Cookie added to cart!');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = 'Add to Cart';
+                        this.disabled = false;
+                    }, 1500);
+                });
+            });
+
+           // Render cart items
+function renderCartItems() {
+    // Get the latest cart from localStorage
+    cart = JSON.parse(localStorage.getItem('yallaCookiesCart')) || [];
+    
+    // Clear current items
+    cartItems.innerHTML = '';
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = `
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+                <button class="continue-shopping" id="continueShopping">Continue Shopping</button>
+            </div>
+        `;
+        
+        document.getElementById('continueShopping').addEventListener('click', closeCartPanel);
+        
+        cartFooter.innerHTML = '';
+        return;
+    }
+    
+    // Add each cart item
+    cart.forEach((item, index) => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <div class="cart-item-image">
+                <i class="fas fa-cookie-bite"></i>
+            </div>
+            <div class="cart-item-details">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">AED ${item.price}</div>
+            </div>
+            <div class="cart-item-actions">
+                <div class="quantity-controls">
+                    <button class="quantity-btn decrease" data-index="${index}">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="quantity">${item.quantity}</span>
+                    <button class="quantity-btn increase" data-index="${index}">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <button class="remove-item" data-index="${index}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        cartItems.appendChild(cartItem);
+    });
+    
+    // Add event listeners for quantity controls
+    document.querySelectorAll('.decrease').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            if (cart[index].quantity > 1) {
+                cart[index].quantity -= 1;
+            } else {
+                cart.splice(index, 1);
+            }
+            localStorage.setItem('yallaCookiesCart', JSON.stringify(cart));
+            updateCartCount();
+            renderCartItems();
+        });
+    });
+    
+    document.querySelectorAll('.increase').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            cart[index].quantity += 1;
+            localStorage.setItem('yallaCookiesCart', JSON.stringify(cart));
+            updateCartCount();
+            renderCartItems();
+        });
+    });
+    
+    document.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            cart.splice(index, 1);
+            localStorage.setItem('yallaCookiesCart', JSON.stringify(cart));
+            updateCartCount();
+            renderCartItems();
+            showToast('Item removed from cart');
+        });
+    });
+    
+    // Render cart footer with total and checkout
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    cartFooter.innerHTML = `
+        <div class="cart-total">
+            <span>Total:</span>
+            <span>AED ${total.toFixed(2)}</span>
+        </div>
+        <button class="checkout-btn">
+            <i class="fas fa-lock"></i>
+            Proceed to Checkout
+        </button>
+   `;
+    
+    document.querySelector('.checkout-btn').addEventListener('click', function() {
+        alert('Checkout functionality would be implemented here!');
+    });
+}
+
+            // Open cart panel
+            function openCartPanel() {
+                cartPanel.classList.add('active');
+                cartOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Close cart panel
+            function closeCartPanel() {
+                cartPanel.classList.remove('active');
+                cartOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Event listeners
+            cartIcon.addEventListener('click', openCartPanel);
+            closeCart.addEventListener('click', closeCartPanel);
+            cartOverlay.addEventListener('click', closeCartPanel);
+
+            // Initialize cart
+            updateCartCount();
+            renderCartItems();
+        });
+    </script>
+
+</body>
+</html>
